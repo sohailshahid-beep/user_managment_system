@@ -47,7 +47,7 @@ export default function Header({
           {title}
         </ThemedText>
         
-        {/* This empty view is for balancing the layout when back button is shown */}
+     
         {showBackButton && <View style={styles.placeholder} />}
       </View>
     </ThemedView>
@@ -78,6 +78,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   placeholder: {
-    width: 32, // Same as back button for balanced layout
+    width: 32,
   },
 });

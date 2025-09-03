@@ -1,57 +1,90 @@
 import React from 'react';
-import { ScrollView, StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, SafeAreaView, View, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/commen/Header';
-import { useUsers } from '@/Context/useContext';
+import { useUserStore } from '@/Context/useContext';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { FlatList } from 'react-native-gesture-handler';
+import { useRouter } from 'expo-router';
+import { UserForm } from '@/components/Form/userform';
 
 export default function ListingScreen() {
-  const { users } = useUsers();
+  const { user } = useUserStore();
+
+  const router = useRouter();
+
+  const hadeledit = () => {
+
+ router.push("/EditUser")
+   
+  }
+
+  const handledelete = () => {
+
+
+
+
+  }
+
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header title="User Listing" showBackButton={true} />
 
       <ThemedView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {users.length === 0 && (
-            <ThemedText style={styles.noUsersText}>No users added yet.</ThemedText>
-          )}
-          {users.map((user, index) => (
-            <ThemedView key={index} style={styles.card}>
-              <ThemedText style={styles.name}>{user.name}</ThemedText>
+        {user.length === 0 ? (
+          <ThemedText style={styles.noUsersText}>No users added yet.</ThemedText>
+        ) : (
+          <FlatList
+            data={user}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.scrollContent}
+            renderItem={({ item }) => (
+                <View style={styles.card}>
+                   
+                    <View style={styles.headerRow}>
+                    <ThemedText style={styles.name}>{item.name}</ThemedText>
 
-              <View style={styles.row}>
-                <MaterialIcons name="phone" size={20} color="#007AFF" style={styles.icon} />
-                <ThemedText style={styles.text}> {user.phoneNumber}</ThemedText>
-              </View>
+                    <View style={styles.actionIcons}>
+                        <TouchableOpacity onPress={hadeledit}>
+                        <MaterialIcons name="edit" size={20} style={styles.icon} />
+                        </TouchableOpacity>
 
-              <View style={styles.row}>
-                <FontAwesome5 name="user-tag" size={20} color="#007AFF" style={styles.icon} />
-                <ThemedText style={styles.text}> {user.role}</ThemedText>
-              </View>
+                        <TouchableOpacity onPress={handledelete}>
+                        <MaterialIcons name="delete" size={20} style={styles.icon} />
+                        </TouchableOpacity>
+                    </View>
+                  </View>
 
-              <View style={styles.row}>
-                <MaterialIcons name="paid" size={20} color="#007AFF" style={styles.icon} />
-                <ThemedText style={styles.text}> {user.isPaidUser ? 'Yes' : 'No'}</ThemedText>
-              </View>
-            </ThemedView>
-          ))}
-        </ScrollView>
+           
+                    <View style={styles.row}>
+                    <MaterialIcons name="phone" size={20} style={styles.icon} />
+                    <ThemedText style={styles.text}>{item.phoneNumber}</ThemedText>
+                    </View>
+
+                    <View style={styles.row}>
+                    <FontAwesome5 name="user-tag" size={18} style={styles.icon} />
+                    <ThemedText style={styles.text}>{item.role}</ThemedText>
+                    </View>
+
+               =
+                    <View style={styles.row}>
+                    <MaterialIcons name="verified-user" size={20} style={styles.icon} />
+                    <ThemedText style={styles.text}>
+                        {item.isPaidUser ? 'Paid User' : 'Free User'}
+                    </ThemedText>
+                    </View>
+                </View>
+                )}
+
+          />
+        )}
       </ThemedView>
     </SafeAreaView>
   );
-}
-
-
-
-
-
-
-
-
-
+};
 
 
 
@@ -69,12 +102,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 6,
-    elevation: 3, // for Android shadow
+    elevation: 3,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    marginBottom: 16,
   },
-  name: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: '#333' },
+  headerRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+actionIcons: {
+  flexDirection: 'row',
+  gap: 12, 
+},
+  name: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: '#333'},
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  icon: { marginRight: 8 },
+  icon: { marginRight: 8, color: '#0000FF' },
   text: { fontSize: 16, color: '#555' },
 });
