@@ -10,6 +10,7 @@ export interface User {
   isPaidUser: boolean;
 }
 
+
 interface UserContextType {
   user: User[]; 
   addUser: (user: User) => void;
@@ -17,11 +18,14 @@ interface UserContextType {
   
 }
 
+
+
+
+
 export const useUserStore = create<UserContextType>((set) => ({
   user: [],
   addUser: (user: User) =>
     set((state) => ({ user: [...state.user, user] })),
   removeUser: (id: number) =>
     set((state) => ({ user: state.user.filter((user) => user.id !== id) })),
-
 }));

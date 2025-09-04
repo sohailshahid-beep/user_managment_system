@@ -7,6 +7,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useUserStore, User } from '@/Context/useContext';
 import { ThemedText } from '@/components/ThemedText';
 
+
 export default function EditUserScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>(); 
