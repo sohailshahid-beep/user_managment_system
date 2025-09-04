@@ -14,7 +14,7 @@ interface UserContextType {
   user: User[]; 
   addUser: (user: User) => void;
   removeUser: (id: number) => void;
-  clearUsers: () => void; 
+  
 }
 
 export const useUserStore = create<UserContextType>((set) => ({
@@ -23,5 +23,5 @@ export const useUserStore = create<UserContextType>((set) => ({
     set((state) => ({ user: [...state.user, user] })),
   removeUser: (id: number) =>
     set((state) => ({ user: state.user.filter((user) => user.id !== id) })),
-  clearUsers: () => set({ user: [] }), 
+
 }));

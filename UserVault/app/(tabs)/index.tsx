@@ -15,7 +15,6 @@ export default function AddUserScreen() {
         <ThemedView style={{ flex: 1 }}>
           <UserForm onSuccess={() => router.push('/Listing')} />
         </ThemedView>
-        
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );

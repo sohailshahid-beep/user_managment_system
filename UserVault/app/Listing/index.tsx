@@ -7,27 +7,20 @@ import { useUserStore } from '@/Context/useContext';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
-import { UserForm } from '@/components/Form/userform';
 
 export default function ListingScreen() {
-  const { user } = useUserStore();
-
+  const { user, removeUser } = useUserStore();
   const router = useRouter();
 
-  const hadeledit = () => {
 
- router.push("/EditUser")
-   
-  }
-
-  const handledelete = () => {
+  const handleEdit = (id: number) => {
+    router.push(`/EditUser?id=${id}`);
+  };
 
 
-
-
-  }
-
-
+  const handleDelete = (id: number) => {
+    removeUser(id);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -39,52 +32,88 @@ export default function ListingScreen() {
         ) : (
           <FlatList
             data={user}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()} 
             contentContainerStyle={styles.scrollContent}
             renderItem={({ item }) => (
-                <View style={styles.card}>
-                   
-                    <View style={styles.headerRow}>
-                    <ThemedText style={styles.name}>{item.name}</ThemedText>
+              <View style={styles.card}>
+               
+                <View style={styles.headerRow}>
+                  <ThemedText style={styles.name}>{item.name}</ThemedText>
 
-                    <View style={styles.actionIcons}>
-                        <TouchableOpacity onPress={hadeledit}>
-                        <MaterialIcons name="edit" size={20} style={styles.icon} />
-                        </TouchableOpacity>
+                  <View style={styles.actionIcons}>
+                    <TouchableOpacity onPress={() => handleEdit(item.id)}>
+                      <MaterialIcons name="edit" size={20} style={styles.icon} />
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handledelete}>
-                        <MaterialIcons name="delete" size={20} style={styles.icon} />
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                      <MaterialIcons name="delete" size={20} style={styles.icon} />
+                    </TouchableOpacity>
                   </View>
-
-           
-                    <View style={styles.row}>
-                    <MaterialIcons name="phone" size={20} style={styles.icon} />
-                    <ThemedText style={styles.text}>{item.phoneNumber}</ThemedText>
-                    </View>
-
-                    <View style={styles.row}>
-                    <FontAwesome5 name="user-tag" size={18} style={styles.icon} />
-                    <ThemedText style={styles.text}>{item.role}</ThemedText>
-                    </View>
-
-               =
-                    <View style={styles.row}>
-                    <MaterialIcons name="verified-user" size={20} style={styles.icon} />
-                    <ThemedText style={styles.text}>
-                        {item.isPaidUser ? 'Paid User' : 'Free User'}
-                    </ThemedText>
-                    </View>
                 </View>
-                )}
 
+              
+                <View style={styles.row}>
+                  <MaterialIcons name="phone" size={20} style={styles.icon} />
+                  <ThemedText style={styles.text}>{item.phoneNumber}</ThemedText>
+                </View>
+
+               
+                <View style={styles.row}>
+                  <FontAwesome5 name="user-tag" size={18} style={styles.icon} />
+                  <ThemedText style={styles.text}>{item.role}</ThemedText>
+                </View>
+
+                {/* Paid/Free Row */}
+                <View style={styles.row}>
+                  <MaterialIcons name="verified-user" size={20} style={styles.icon} />
+                  <ThemedText style={styles.text}>
+                    {item.isPaidUser ? 'Paid User' : 'Free User'}
+                  </ThemedText>
+                </View>
+              </View>
+            )}
           />
         )}
       </ThemedView>
     </SafeAreaView>
   );
-};
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -108,16 +137,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 12,
-},
-actionIcons: {
-  flexDirection: 'row',
-  gap: 12, 
-},
-  name: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: '#333'},
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  actionIcons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  name: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: '#333' },
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   icon: { marginRight: 8, color: '#0000FF' },
   text: { fontSize: 16, color: '#555' },
