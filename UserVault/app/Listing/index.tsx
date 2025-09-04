@@ -13,6 +13,7 @@ export default function ListingScreen() {
   const router = useRouter();
 
 
+  
   const handleEdit = (id: number) => {
     router.push(`/EditUser?id=${id}`);
   };
@@ -63,7 +64,6 @@ export default function ListingScreen() {
                   <ThemedText style={styles.text}>{item.role}</ThemedText>
                 </View>
 
-                {/* Paid/Free Row */}
                 <View style={styles.row}>
                   <MaterialIcons name="verified-user" size={20} style={styles.icon} />
                   <ThemedText style={styles.text}>
@@ -78,6 +78,55 @@ export default function ListingScreen() {
     </SafeAreaView>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

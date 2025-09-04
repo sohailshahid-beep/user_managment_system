@@ -49,7 +49,8 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
     name: Yup.string().required('Name is required'),
     phoneNumber: Yup.string()
       .matches(/^[0-9]+$/, 'Phone number must be numeric')
-      .min(10, 'Phone number must be at least 10 digits')
+      .min(11, 'Phone number must be at least 10 digits')
+      .max(11,"Phone number must be 11 digits")
       .required('Phone number is required'),
     role: Yup.string()
       .oneOf(['Manager', 'Sales Manager', 'Admin'], 'Select a valid role')
@@ -191,6 +192,60 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
     </ScrollView>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1, padding: 16, paddingBottom: 40 },
