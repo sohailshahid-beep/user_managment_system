@@ -1,8 +1,9 @@
-import React, { createContext, useState, ReactNode, useContext } from 'react';
+import { create } from 'zustand';
 
 export type UserRole = 'Manager' | 'Sales Manager' | 'Admin';
 
 export interface User {
+  id: number; 
   name: string;
   phoneNumber: string;
   role: UserRole;
@@ -10,28 +11,17 @@ export interface User {
 }
 
 interface UserContextType {
-  users: User[];
+  user: User[]; 
   addUser: (user: User) => void;
+  removeUser: (id: number) => void;
+  
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+export const useUserStore = create<UserContextType>((set) => ({
+  user: [],
+  addUser: (user: User) =>
+    set((state) => ({ user: [...state.user, user] })),
+  removeUser: (id: number) =>
+    set((state) => ({ user: state.user.filter((user) => user.id !== id) })),
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [users, setUsers] = useState<User[]>([]);
-
-  const addUser = (user: User) => {
-    setUsers(prev => [...prev, user]);
-  };
-
-  return (
-    <UserContext.Provider value={{ users, addUser }}>
-      {children}
-    </UserContext.Provider>
-  );
-};
-
-export const useUsers = () => {
-  const context = useContext(UserContext);
-  if (!context) throw new Error('useUsers must be used within UserProvider');
-  return context;
-};
+}));
