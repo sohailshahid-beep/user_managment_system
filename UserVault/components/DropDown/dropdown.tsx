@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import React, { useState, useEffect, useCallback } from 'react';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import { Ionicons } from '@expo/vector-icons'; // or any icon library
 
 interface DropdownProps {
   options: string[];
@@ -11,98 +10,73 @@ interface DropdownProps {
   placeholder?: string;
 }
 
-export const Dropdown = ({ options, selectedValue, onValueChange, placeholder = 'Select...' }: DropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const Dropdown: React.FC<DropdownProps> = ({
+  options,
+  selectedValue,
+  onValueChange,
+  placeholder = 'Select a role',
+}) => {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string | null>(selectedValue || null);
+  const [items, setItems] = useState(
+    options.map((option) => ({ label: option, value: option }))
+  );
 
-  const handleSelect = (value: string) => {
-    onValueChange(value);
-    setIsOpen(false);
-  };
 
+
+  useEffect(() => {
+    setValue(selectedValue || null);
+  }, [selectedValue]);
 
 
   
+  const handleSetValue = useCallback(
+    (callbackOrValue: string | ((prev: string | null) => string | null)) => {
+      if (typeof callbackOrValue === 'function') {
+        const newValue = (callbackOrValue as (prev: string | null) => string | null)(value);
+        setValue(newValue);
+        if (newValue) onValueChange(newValue);
+      } else {
+        setValue(callbackOrValue);
+        if (callbackOrValue) onValueChange(callbackOrValue);
+      }
+    },
+    [value, onValueChange]
+  );
+
   return (
     <ThemedView style={styles.container}>
-      <TouchableOpacity style={styles.input} onPress={() => setIsOpen(prev => !prev)}>
-        <ThemedText style={styles.text}>
-          {selectedValue || placeholder}
-        </ThemedText>
-        <Ionicons name={isOpen ? "chevron-up" : "chevron-down"} size={20} color="#333" />
-      </TouchableOpacity>
-
-      {isOpen && (
-            <ThemedView style={styles.dropdown}>
-                {options.map((item) => (
-                <TouchableOpacity key={item} style={styles.option} onPress={() => handleSelect(item)}>
-                    <ThemedText>{item}</ThemedText>
-                </TouchableOpacity>
-                ))}
-            </ThemedView>
-            )}
-
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={handleSetValue} 
+        setItems={setItems}
+        placeholder={placeholder}
+        containerStyle={styles.dropdownContainer}
+        style={styles.dropdown}
+        textStyle={styles.text}
+      />
     </ThemedView>
   );
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const styles = StyleSheet.create({
-  container: { width: '100%' },
-  input: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-  },
-  text: { fontSize: 16, color: '#333' },
+  container: { width: '100%', zIndex: 1000 },
+  dropdownContainer: { width: '100%' },
   dropdown: {
-    borderWidth: 1,
+    backgroundColor: '#fff',
     borderColor: '#ddd',
     borderRadius: 8,
-    marginTop: 4,
-    backgroundColor: '#fff',
-    maxHeight: 200,
   },
-  option: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  dropdownList: {
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderRadius: 8,
+  },
+  text: {
+    fontSize: 16,
+    color: '#333',
   },
 });
