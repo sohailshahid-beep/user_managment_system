@@ -26,7 +26,6 @@ export default function ListingScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header title="User Listing" showBackButton={true} />
-
       <ThemedView style={styles.container}>
         {user.length === 0 ? (
           <ThemedText style={styles.noUsersText}>No users added yet.</ThemedText>
@@ -36,34 +35,26 @@ export default function ListingScreen() {
             keyExtractor={(item) => item.id.toString()} 
             contentContainerStyle={styles.scrollContent}
             renderItem={({ item }) => (
-              <View style={styles.card}>
-               
+              <View style={styles.card}>              
                 <View style={styles.headerRow}>
                   <ThemedText style={styles.name}>{item.name}</ThemedText>
-
                   <View style={styles.actionIcons}>
                     <TouchableOpacity onPress={() => handleEdit(item.id)}>
                       <MaterialIcons name="edit" size={20} style={styles.icon} />
                     </TouchableOpacity>
-
                     <TouchableOpacity onPress={() => handleDelete(item.id)}>
                       <MaterialIcons name="delete" size={20} style={styles.icon} />
                     </TouchableOpacity>
                   </View>
                 </View>
-
-              
                 <View style={styles.row}>
                   <MaterialIcons name="phone" size={20} style={styles.icon} />
                   <ThemedText style={styles.text}>{item.phoneNumber}</ThemedText>
-                </View>
-
-               
+                </View>               
                 <View style={styles.row}>
                   <FontAwesome5 name="user-tag" size={18} style={styles.icon} />
                   <ThemedText style={styles.text}>{item.role}</ThemedText>
                 </View>
-
                 <View style={styles.row}>
                   <MaterialIcons name="verified-user" size={20} style={styles.icon} />
                   <ThemedText style={styles.text}>

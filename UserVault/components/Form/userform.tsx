@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import * as Yup from 'yup';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -17,14 +17,14 @@ export interface UserFormData {
 }
 
 interface UserFormProps {
-  user?: User; 
-  onSuccess?: () => void; 
+  user?: User;
+  onSuccess?: () => void;
 }
 
 export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
   const router = useRouter();
   const addUser = useUserStore((state) => state.addUser);
-  const removeUser = useUserStore((state) => state.removeUser);
+  const UpdateUser = useUserStore((state) => state.updateUser);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<UserFormData>({
@@ -50,7 +50,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
     phoneNumber: Yup.string()
       .matches(/^[0-9]+$/, 'Phone number must be numeric')
       .min(11, 'Phone number must be at least 10 digits')
-      .max(11,"Phone number must be 11 digits")
+      .max(11, 'Phone number must be 11 digits')
       .required('Phone number is required'),
     role: Yup.string()
       .oneOf(['Manager', 'Sales Manager', 'Admin'], 'Select a valid role')
@@ -58,12 +58,10 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
     isPaidUser: Yup.boolean(),
   });
 
-  const handleInputChange = <K extends keyof UserFormData>(
-    field: K,
-    value: UserFormData[K]
-  ) => {
+  const handleInputChange = <K extends keyof UserFormData>(field: K, value: UserFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
 
   const handleSubmit = async () => {
     try {
@@ -72,20 +70,22 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
 
       if (!formData.role) return;
 
-      const newUser: User = {
-        id: user ? user.id : Date.now(),
-        name: formData.name,
-        phoneNumber: formData.phoneNumber,
-        role: formData.role as UserRole,
-        isPaidUser: formData.isPaidUser,
-      };
-
       if (user) {
-        removeUser(user.id);
-        addUser(newUser);
+        UpdateUser({
+          ...user,
+          name: formData.name,
+          phoneNumber: formData.phoneNumber,
+          role: formData.role as UserRole,
+          isPaidUser: formData.isPaidUser,
+        });
       } else {
-        addUser(newUser);
-     
+        addUser({
+          id: Date.now(),
+          name: formData.name,
+          phoneNumber: formData.phoneNumber,
+          role: formData.role as UserRole,
+          isPaidUser: formData.isPaidUser,
+        });
         setFormData({ name: '', phoneNumber: '', role: '', isPaidUser: false });
       }
 
@@ -105,14 +105,14 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
     router.push('/Listing');
   };
 
+  
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContent}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
     >
       <ThemedView style={styles.form}>
-  
+   
         <ThemedView style={styles.inputGroup}>
           <ThemedText style={styles.label}>
             Name <ThemedText style={styles.required}>*</ThemedText>
@@ -125,6 +125,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
           />
           {errors.name && <ThemedText style={styles.errorText}>{errors.name}</ThemedText>}
         </ThemedView>
+
 
         <ThemedView style={styles.inputGroup}>
           <ThemedText style={styles.label}>
@@ -140,6 +141,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
           {errors.phoneNumber && <ThemedText style={styles.errorText}>{errors.phoneNumber}</ThemedText>}
         </ThemedView>
 
+   
         <ThemedView style={styles.inputGroup}>
           <ThemedText style={styles.label}>
             Role <ThemedText style={styles.required}>*</ThemedText>
@@ -171,6 +173,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
           </ThemedButton>
         </ThemedView>
 
+        {/* Submit Button */}
         <ThemedButton
           title={user ? "Edit User" : "Add User"}
           onPress={handleSubmit}
@@ -178,7 +181,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
           textStyle={styles.submitButtonText}
         />
 
-      
+        {/* List Users */}
         {!user && (
           <ThemedButton
             title="List Users"
@@ -187,69 +190,13 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess }) => {
             textStyle={styles.submitButtonText}
           />
         )}
-
       </ThemedView>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const styles = StyleSheet.create({
-  scrollContent: { flexGrow: 1, padding: 16, paddingBottom: 40 },
-  form: { gap: 20 },
+  form: { flex: 1, padding: 16, gap: 20 },
   inputGroup: { gap: 8 },
   label: { fontSize: 16, color: '#000' },
   required: { color: 'red' },
